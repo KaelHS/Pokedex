@@ -1,8 +1,8 @@
-import { createContext, useState, useEffect, useCallback, useContext } from 'react';
+import { createContext, useState, useEffect, useContext } from 'react';
 import { parseCookies, setCookie, destroyCookie } from 'nookies';
 import { useRouter } from 'next/router';
 
-interface IFakeAuthContextProps {
+interface IFakeAuthContextData {
     signIn: (name: string) => void;
     signOut: () => void;
     isAuthenticated: boolean;
@@ -12,7 +12,7 @@ interface IFakeAuthProviderProps {
     children: React.ReactNode;
 }
 
-export const FakeAuthContext = createContext<IFakeAuthContextProps>({} as IFakeAuthContextProps);
+export const FakeAuthContext = createContext<IFakeAuthContextData>({} as IFakeAuthContextData);
 
 export const FakeAuthProvider = ({ children }: IFakeAuthProviderProps) => {
 

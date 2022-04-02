@@ -9,7 +9,6 @@ const Login = () => {
 
   const { colors } = useContext(ThemeContext);
   const { signIn, isAuthenticated } = useAuth();
-  // const { setLoading, handleSignIn, loading } = useContext(AuthContext);
 
   const [ name, setName ] = useState<string>('');
   const [ email, setEmail ] = useState<string>('');

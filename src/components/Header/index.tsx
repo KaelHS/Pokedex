@@ -7,6 +7,7 @@ import { lightTheme, darkTheme, highContrast } from '../../styles/themes';
 import { Switcher } from '../Switcher';
 import { FaSignOutAlt } from 'react-icons/fa';
 import { useAuth } from '../../contexts/FakeAuthContext';
+import { usePokemon } from '../../contexts/PokemonContext';
 
 interface IHeaderProps {
   pokemonName?: string;
@@ -17,6 +18,7 @@ const Header = ({ pokemonName, userName }: IHeaderProps) => {
 
   const { theme, changeTheme } = useContext(CustomThemeContext);
   const { name, colors } = useContext(ThemeContext);
+  const { } = usePokemon();
   const [ isToggled, setIsToggled ] = useState<boolean>(false);
   const { signOut } = useAuth();
 

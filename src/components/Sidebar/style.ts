@@ -4,7 +4,7 @@ export const SidebarContainer = styled.nav`
     height: 100vh;
     overflow-y: hidden;
     width: 20%;
-    padding: 3rem 1.5rem;
+    padding: 3rem 2rem;
     background: ${props => props.theme.colors.background4};
     color: ${props => props.theme.colors.text4};
     display: flex;
@@ -44,7 +44,7 @@ export const SidebarContainer = styled.nav`
         align-items: center;
         background: #ccc;
         padding: 1rem 1rem;
-        max-width: 20rem;
+        width: 100%;
         border-radius: 1.5rem; 
 
         input{
@@ -56,6 +56,32 @@ export const SidebarContainer = styled.nav`
             color: #fff;
             outline: none;
             
+        }
+    }
+
+    .pokemonListSection {
+        width: 100%;
+        overflow-y: auto;
+        
+        &::-webkit-scrollbar {
+            width: 0.5rem; 
+        }
+
+        &::-webkit-scrollbar-thumb {
+            background-color: ${props => props.theme.colors.blue};
+            border-radius: 100px;
+        }
+
+        ul {
+            padding: 0 0.5rem;
+
+            li {
+                padding: 0.25rem 0;
+
+                a {
+                    font-size: 1.25rem;
+                }
+            }
         }
     }
 `;

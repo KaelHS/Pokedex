@@ -26,4 +26,8 @@ export const GlobalStyle = createGlobalStyle`
         color: inherit;
     }
 
+    li {
+        list-style: none;
+    }
+
 `;

@@ -1,20 +1,25 @@
 import { useEffect, useLayoutEffect } from "react";
-import { NextPage } from "next";
-import { useRouter, Router } from "next/router";
+import { useRouter } from "next/router";
 import Layout from "../../components/Layout";
 import { useAuth } from "../../contexts/FakeAuthContext";
 import Login from "..";
+import { usePokemon } from "../../contexts/PokemonContext";
 
-const Dashboard: NextPage = () => {
+const Dashboard = () => {
 
     const router = useRouter();
     const { isAuthenticated } = useAuth();
+    const { data, loading, error } = usePokemon();
 
     useEffect( () => {
         if(!isAuthenticated) {
             router.push('/');
         }
     }, [router, isAuthenticated]);
+
+    if (loading) return <span>Loading...</span>;
+    if (error) return <span>Error! {error.message}</span>;
+
 
     if(!isAuthenticated) {
         return <Login />
@@ -23,8 +28,11 @@ const Dashboard: NextPage = () => {
     return(
        <Layout>
            <h2>teste</h2>
+           {console.log(data)}
        </Layout>
     );
 }
+
+
 
 export default Dashboard;
