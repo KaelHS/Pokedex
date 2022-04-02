@@ -1,6 +1,7 @@
 import { createContext, useState, useEffect, useContext } from 'react';
 import { parseCookies, setCookie, destroyCookie } from 'nookies';
 import { useRouter } from 'next/router';
+import { usePokemon } from './PokemonContext';
 
 interface IFakeAuthContextData {
     signIn: (name: string) => void;
@@ -17,6 +18,7 @@ export const FakeAuthContext = createContext<IFakeAuthContextData>({} as IFakeAu
 export const FakeAuthProvider = ({ children }: IFakeAuthProviderProps) => {
 
     const [ isAuthenticated, setIsAuthenticated ] = useState(false);
+    const { setSelectedPokemon } = usePokemon();
     const router = useRouter();
 
     useEffect( () => {
@@ -43,6 +45,7 @@ export const FakeAuthProvider = ({ children }: IFakeAuthProviderProps) => {
             destroyCookie(null, 'name');
             setIsAuthenticated(false);
             router.push('/');
+            setSelectedPokemon(undefined);
 
         } catch(error) {
             console.log(error);

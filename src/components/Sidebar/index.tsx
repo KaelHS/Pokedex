@@ -2,6 +2,7 @@ import Image from 'next/image';
 import React , { useEffect, useState, useRef } from 'react';
 import { FaSearch } from 'react-icons/fa';
 import { usePokemon } from '../../contexts/PokemonContext';
+import { capitalize } from '../helpers/capitalize';
 import { SidebarContainer } from './style';
 import Link from 'next/link';
 
@@ -13,15 +14,10 @@ const Sidebar = () => {
     const { data, fetchMore, setSelectedPokemon } = usePokemon();
     const sentinelRef = useRef<any>();
 
-    const capitalize = ( name: string) => {
-        return name.charAt(0).toUpperCase() + name.slice(1);
-    }
-
     useEffect(() => {
       const intersectionObserver = new IntersectionObserver(entries => {
         if (entries.some(entry => entry.isIntersecting)) {
           setCurrentPage((currentValue) => currentValue + 1);
-          // setSentinelIsVisible(true);
         } 
       })
       intersectionObserver.observe(sentinelRef.current);
@@ -29,7 +25,7 @@ const Sidebar = () => {
     }, []);
 
     useEffect(() => {
-      if(data.pokemons.results.length <= data.pokemons.count ) {
+      if(data?.pokemons?.results.length <= data.pokemons.count ) {
         fetchMore({
           variables: {
             offset: currentPage * 20,
@@ -45,7 +41,6 @@ const Sidebar = () => {
             });
           }
         });
-        // setSentinelIsVisible(false);
       }   
     }, [currentPage]);
   
@@ -73,7 +68,7 @@ const Sidebar = () => {
           <ul>
             { data && data.pokemons?.results?.map((pokemon, index) => (
               <li key={Math.random() * index}>
-                <Link href={`/pokemon/${pokemon.name}`}  >
+                <Link href={`/dashboard/${pokemon.name}`}  >
                   <a onClick={() => setSelectedPokemon(pokemon)}>{`${("0000" + (index+1)).slice(-4)} - ${capitalize(pokemon.name)} `}</a>
                 </Link>
               </li>

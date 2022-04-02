@@ -19,6 +19,15 @@ const Container = styled.header`
 
   color: ${(props) => props.theme.colors.text1};
 
+  .infoView {
+    display: flex;
+    align-items: center;
+
+    h1 {
+      font-size: 2.5rem;
+    }
+  }
+
   .actions {
     display: flex;
     align-items: center;

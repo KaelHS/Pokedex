@@ -28,7 +28,6 @@ const Dashboard = () => {
     return(
        <Layout>
            <h2>teste</h2>
-           {console.log(data)}
        </Layout>
     );
 }

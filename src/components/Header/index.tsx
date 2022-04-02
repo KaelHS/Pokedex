@@ -5,9 +5,10 @@ import Container from './style';
 import { CustomThemeContext } from '../../contexts/CustomThemeContext';
 import { lightTheme, darkTheme, highContrast } from '../../styles/themes';
 import { Switcher } from '../Switcher';
-import { FaSignOutAlt } from 'react-icons/fa';
+import { capitalize } from '../helpers/capitalize';
 import { useAuth } from '../../contexts/FakeAuthContext';
 import { usePokemon } from '../../contexts/PokemonContext';
+import Image from 'next/image';
 
 interface IHeaderProps {
   pokemonName?: string;
@@ -18,7 +19,7 @@ const Header = ({ pokemonName, userName }: IHeaderProps) => {
 
   const { theme, changeTheme } = useContext(CustomThemeContext);
   const { name, colors } = useContext(ThemeContext);
-  const { } = usePokemon();
+  const { selectedPokemon } = usePokemon();
   const [ isToggled, setIsToggled ] = useState<boolean>(false);
   const { signOut } = useAuth();
 
@@ -29,7 +30,15 @@ const Header = ({ pokemonName, userName }: IHeaderProps) => {
 
   return (
     <Container>
-      <h1>Nome do Pokemon</h1>
+      <section className='infoView'>
+        { console.log(selectedPokemon)}
+        { selectedPokemon && 
+          <>
+            <h1>{capitalize(selectedPokemon?.name)}</h1>
+            <Image src={selectedPokemon?.image} alt={selectedPokemon?.name} height={100} width={100}/>
+          </>
+        }
+      </section>
       <div className='actions'>
         <div className="themeArea">
           { isToggled ? changeTheme(darkTheme) : changeTheme(lightTheme) }
