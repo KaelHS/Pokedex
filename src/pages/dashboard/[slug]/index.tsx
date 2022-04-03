@@ -1,14 +1,15 @@
 import { GetServerSideProps, GetStaticProps } from "next";
 import Head from "next/head";
-import { GET_POKEMON_SELECTED, GET_EVOLUTION_CHAIN } from "../../../graphql/queries";
+import { GET_POKEMON_SELECTED, GET_EVOLUTION_CHAIN, GET_SPECIES } from "../../../graphql/queries";
 import { useQuery } from '@apollo/client';
 import { usePokemon } from "../../../contexts/PokemonContext";
 import { useRouter } from 'next/router'
 import Layout from "../../../components/Layout";
 import { capitalize } from "../../../components/helpers/capitalize";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { PokemonDetailContainer } from "./style";
+import { axiosApi } from "../../../services/axiosApi";
 
 interface ISelectedPokemon {
     id: number;
@@ -22,9 +23,7 @@ interface ISelectedPokemon {
         }
     }[];
     species: string;
-    sprites: {
-        front_default: string;
-    };
+    sprites: any;
     types: {
         type: {
             name: string;
@@ -32,31 +31,83 @@ interface ISelectedPokemon {
     }[];
   }
 
+interface IEvolvesProps {
+    species: {
+      name: string;
+    };
+    evolves_to: IEvolvesProps[];
+}
+
+interface IPokemonChainEvolutionProps {
+    name: string;
+    image?: string;
+  }
 
 export default function Pokemon () {
 
     const { selectedPokemon } = usePokemon();
     const { slug } = useRouter().query;
     const [ pokemonData, setPokemonData ] = useState<ISelectedPokemon>();
-    const [ evolutionChain, setEvolutionChain ] = useState<any>();
+    const [ evolutionChain, setEvolutionChain ] = useState<IPokemonChainEvolutionProps[]>();
+    const [ species, setSpecies ] = useState<any[]>([]);
+    const [ familyEvolutionChain, setFamilyEvolutionChain ] = useState<IPokemonChainEvolutionProps[]>([]);
+
     const { loading, error, data } = useQuery(GET_POKEMON_SELECTED, {
         variables: {
             name: slug
+        },
+        onCompleted: ( data ) => {
+
+            setPokemonData( data.pokemon );
+
+            const fetchSpecieToGetChainEvolution = async () => {
+                const specie = await axiosApi.get( data.pokemon.species.url ); 
+                const specieData = await specie.data;
+
+                const fetchEvolutionChain = async () => {
+                    const evolutionChain = await axiosApi.get( specieData?.evolution_chain?.url );
+                    const evolutionChainData = await evolutionChain.data;
+                    const familyEvolution = handleNameSpecies( evolutionChainData?.chain );
+                    setFamilyEvolutionChain( familyEvolution );
+                }
+                fetchEvolutionChain();
+            }
+            fetchSpecieToGetChainEvolution();
         }
     });
-    const { id } = data?.pokemon;
-    const chainEvolutionQuery = useQuery(GET_EVOLUTION_CHAIN, {
-        variables: {
-            id: id.toString()
-        }
-    })
 
-    useEffect( () => {
-        if(data && data.pokemon) {
-            setPokemonData(data.pokemon);
-            setEvolutionChain(chainEvolutionQuery.data?.evolutionChain);
+    const handleNameSpecies = useCallback(({ species, evolves_to }: IEvolvesProps) => {
+
+          let namesPokemons = [
+            {
+              name: species.name,
+            },
+          ];
+          evolves_to.forEach((evolves:any) => {
+            namesPokemons = namesPokemons.concat(handleNameSpecies(evolves));
+          });
+          return namesPokemons;
+    },[]);
+
+    useEffect(() => {
+        if (familyEvolutionChain.length) {
+
+          const urls = familyEvolutionChain.map(pokemon => axiosApi.get(`/pokemon/${pokemon.name}`));
+    
+          Promise.all([...urls]).then(responses => {
+            const result = responses.map((response, index) => {
+              const { sprites } = response.data;
+
+              return {
+                ...familyEvolutionChain[index],
+                image: sprites?.other['official-artwork'].front_default,
+              };
+            });
+            setEvolutionChain(result);
+          });
         }
-    }, [data]);
+      }, [familyEvolutionChain]);
+
 
     return(
         <Layout>
@@ -64,9 +115,10 @@ export default function Pokemon () {
                 <title>{selectedPokemon && capitalize(selectedPokemon?.name)} | Pokedex</title>
             </Head>
             <PokemonDetailContainer>
+                { console.log(evolutionChain)}
                 <div className="contentContainer">
                     <div className="imageContainer">
-                        {pokemonData && <Image src={pokemonData?.sprites?.front_default} width={400} height={400} alt={selectedPokemon?.name} />}
+                        {evolutionChain && <Image src={evolutionChain?.image} width={400} height={400} alt={selectedPokemon?.name} />}
                     </div>
                     <div className="typeContainer">
                         <p>Type</p>
@@ -110,7 +162,6 @@ export default function Pokemon () {
                         </article>
                     </div>
                 </div>
-                {console.log(chainEvolutionQuery)}
             </PokemonDetailContainer>
         </Layout>
     ); 

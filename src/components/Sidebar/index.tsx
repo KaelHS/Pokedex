@@ -25,7 +25,7 @@ const Sidebar = () => {
     }, []);
 
     useEffect(() => {
-      if(data?.pokemons?.results.length <= data.pokemons.count ) {
+      if(data?.pokemons?.results.length <= data?.pokemons?.count ) {
         fetchMore({
           variables: {
             offset: currentPage * 20,

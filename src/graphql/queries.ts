@@ -31,9 +31,6 @@ export const GET_POKEMON_SELECTED = gql`
           name
         }
       }
-      sprites {
-        front_default
-      }
       species {
         url
       }
@@ -46,28 +43,28 @@ export const GET_POKEMON_SELECTED = gql`
   }
 `;
 
+export const GET_SPECIES = gql`
+  query species {
+    species {
+      count
+      next
+      previous
+      results {
+        url
+        name
+      }
+    }
+  }
+`;
+
 export const GET_EVOLUTION_CHAIN = gql`
   query evolutionChain($id: String!) {
     evolutionChain(id: $id) {
       params
       status
       message
-      response {
-        chain {
-          evolves_to {
-            evolves_to {
-              species {
-                name
-                url
-              }
-            }
-          }
-          species {
-            name
-            url
-          }
-        }
-      }
+      response 
+
     }
   }
 `;
