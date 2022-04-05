@@ -3,7 +3,7 @@ import Image from 'next/image';
 import { ThemeContext } from 'styled-components';
 import { Container } from './style';
 import { useAuth } from '../contexts/FakeAuthContext';
-import Dashboard from './dashboard';
+import Dashboard from './pokemons';
 
 const Login = () => {
 

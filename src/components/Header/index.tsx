@@ -42,9 +42,9 @@ const Header = ({ pokemonName, userName }: IHeaderProps) => {
       <div className='actions'>
         <div className="themeArea">
           { isToggled ? changeTheme(darkTheme) : changeTheme(lightTheme) }
-          <RiMoonFill color={ isToggled ? 'gray' : 'blue' }/>
+          <RiSunFill color={ isToggled ? 'gray' : 'yellow' }/>
           <Switcher isToggled={ isToggled } onToggle={ () => setIsToggled(!isToggled)} />
-          <RiSunFill color={ isToggled ? 'yellow' : 'gray' } />
+          <RiMoonFill color={ isToggled ? 'blue' : 'gray' } />
         </div>
         <button type="button" className='logoutButton' onClick={ () => handleLogout() }>
           <RiLogoutCircleRFill color={ colors.red }/>

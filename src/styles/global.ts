@@ -8,7 +8,7 @@ export const GlobalStyle = createGlobalStyle`
     }
     body {
         background: #fff;
-        font-family: 'Lato', sans-serif;
+        font-family: 'Roboto', sans-serif;
     }
     html {
         @media(max-width: 1080px) {

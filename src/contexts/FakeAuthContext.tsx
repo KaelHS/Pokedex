@@ -33,7 +33,7 @@ export const FakeAuthProvider = ({ children }: IFakeAuthProviderProps) => {
                 maxAge: 30 * 24 * 60 * 60 //verificar
             });
             setIsAuthenticated(true);
-            router.push('/dashboard');
+            router.push('/pokemons');
         } catch (error) {
             console.log(error);
         }
@@ -57,7 +57,7 @@ export const FakeAuthProvider = ({ children }: IFakeAuthProviderProps) => {
         const { name } = parseCookies();
 
         if (name) {
-            router.push('/dashboard');
+            router.push('/pokemons');
             signIn(name);
         }
     }

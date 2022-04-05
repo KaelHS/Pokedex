@@ -42,8 +42,8 @@ export const SidebarContainer = styled.nav`
     .searchBox {
         display: flex;
         align-items: center;
-        background: #ccc;
-        padding: 1rem 1rem;
+        background: ${props => props.theme.colors.background1};
+        padding: 0.75rem 1rem;
         width: 100%;
         border-radius: 1.5rem; 
 
@@ -53,7 +53,8 @@ export const SidebarContainer = styled.nav`
             background: inherit;
             border: none;
             line-height:1rem;
-            color: #fff;
+            color: ${props => props.theme.colors.text1};
+            font-size: 1.125rem;
             outline: none;
             
         }

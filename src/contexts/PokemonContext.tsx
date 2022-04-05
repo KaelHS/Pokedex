@@ -1,5 +1,5 @@
 import { createContext, useState, useEffect, useContext } from 'react';
-import { gql, useQuery,  } from '@apollo/client';
+import { gql, useQuery, useLazyQuery  } from '@apollo/client';
 import { GET_POKEMONS } from '../graphql/queries';
 interface IPokemonContextData {
     data: { pokemons: IResponseData };
@@ -8,6 +8,11 @@ interface IPokemonContextData {
     fetchMore: any;
     selectedPokemon: IPokemonListItem | undefined;
     setSelectedPokemon: React.Dispatch<React.SetStateAction<any>>;
+    allPokemons: IPokemonListItem[];
+    filteredPokemons: IPokemonListItem[];
+    setSearch: React.Dispatch<React.SetStateAction<any>>;
+    search: string;
+
 }
 
 interface IPokemonProviderProps {
@@ -36,6 +41,9 @@ export const PokemonContext = createContext<IPokemonContextData>({} as IPokemonC
 export const PokemonProvider = ({ children }: IPokemonProviderProps) => {
     
     const [ selectedPokemon, setSelectedPokemon ] = useState<IPokemonListItem>();
+    const [ allPokemons, setAllPokemons ] = useState<IPokemonListItem[]>([]);
+    const [ search, setSearch ] = useState('');
+
     const { data, loading, error, fetchMore } = useQuery(GET_POKEMONS, {
         variables: {
             limit: 30,
@@ -43,9 +51,27 @@ export const PokemonProvider = ({ children }: IPokemonProviderProps) => {
         }
     });
 
+    const allData = useQuery(GET_POKEMONS, {
+        skip: !data,
+        variables: {
+            limit: data?.pokemons.count,
+            offset: 0,
+        }
+    });
+
+    useEffect(() => {
+        if(data) {
+            // console.log(allData)
+
+            // setAllPokemons(allData.data?.pokemons?.results.map( (pokemon: { name: any }) => pokemon.name ));
+            setAllPokemons(allData.data?.pokemons?.results);
+        }
+    } , [data]);
+
+    const filteredPokemons = allPokemons ? allPokemons.filter( ( pokemon ) => pokemon.name.includes(search.toLowerCase()) ) : [];
     
     return (
-        <PokemonContext.Provider value={{data, loading, error, fetchMore, selectedPokemon, setSelectedPokemon}} >
+        <PokemonContext.Provider value={{data, loading, error, fetchMore, selectedPokemon, setSelectedPokemon, allPokemons, filteredPokemons, search, setSearch}} >
             {children}
         </PokemonContext.Provider>
     );

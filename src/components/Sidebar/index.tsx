@@ -8,24 +8,13 @@ import Link from 'next/link';
 
 const Sidebar = () => {
 
-    const [search, setSearch] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
     const [sentinelIsVisible, setSentinelIsVisible] = useState<boolean>(false);
-    const { data, fetchMore, setSelectedPokemon } = usePokemon();
+    const { fetchMore, setSelectedPokemon, search, setSearch, filteredPokemons } = usePokemon();
     const sentinelRef = useRef<any>();
 
     useEffect(() => {
-      const intersectionObserver = new IntersectionObserver(entries => {
-        if (entries.some(entry => entry.isIntersecting)) {
-          setCurrentPage((currentValue) => currentValue + 1);
-        } 
-      })
-      intersectionObserver.observe(sentinelRef.current);
-      return () => intersectionObserver.disconnect();
-    }, []);
-
-    useEffect(() => {
-      if(data?.pokemons?.results.length <= data?.pokemons?.count ) {
+      // if(data?.pokemons?.results.length <= data?.pokemons?.count ) {
         fetchMore({
           variables: {
             offset: currentPage * 20,
@@ -41,8 +30,24 @@ const Sidebar = () => {
             });
           }
         });
-      }   
+      //   setSentinelIsVisible(false);
+      // }   
     }, [currentPage]);
+
+    useEffect(() => {
+      const intersectionObserver = new IntersectionObserver(entries => {
+        if (entries.some(entry => entry.isIntersecting)) {
+          setCurrentPage((currentValue) => currentValue + 1);
+          setSentinelIsVisible(entries.some(entry => entry.isIntersecting));
+        } 
+      })
+      intersectionObserver.observe(sentinelRef.current);
+      return () => intersectionObserver.disconnect();
+    }, []);
+
+
+
+    useEffect( () => {},[search]);
   
 
   return (
@@ -66,14 +71,15 @@ const Sidebar = () => {
         </header>
         <section className='pokemonListSection'>
           <ul>
-            { data && data.pokemons?.results?.map((pokemon, index) => (
+            { filteredPokemons && filteredPokemons.map((pokemon, index) => (
               <li key={Math.random() * index}>
-                <Link href={`/dashboard/${pokemon.name}`}  >
+                <Link href={`/pokemons/${pokemon.name}`}  >
                   <a onClick={() => setSelectedPokemon(pokemon)}>{`${("0000" + (index+1)).slice(-4)} - ${capitalize(pokemon.name)} `}</a>
                 </Link>
               </li>
             ))}
             <li ref={sentinelRef}></li>
+            { console.log(filteredPokemons) }
           </ul>
         </section>
 
